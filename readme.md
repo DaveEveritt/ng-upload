@@ -1,7 +1,7 @@
-# Angular file upload skeleton
+# Angular file upload
 
-A basic structure for uploading files.
+A basic setup for uploading files from the browser.
 
-Displays the chosen image and "data:image" in the browser.
+Displays the chosen image and "data:image" in the browser window.
 
-This was an incomplete snippet from a larger project completed in 2014.
+This was an incomplete snippet from January 2014, from a larger project completed later.
