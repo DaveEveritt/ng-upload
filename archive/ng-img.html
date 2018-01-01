@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ng image upload</title>
+  <script src="js/angular-file-upload-shim.js"></script>
+  <script src="js/angular.min.js"></script>
+  <script src="js/angular-file-upload.js"></script>
+
+  <script>
+  var app = angular.module('myApp', ['angularFileUpload']);
+  
+	// app.controller("MyCtrl", function($scope, $upload) {
+	// 	console.log("in MyCtrl");
+	//   // });
+	//     $scope.onFileSelect = function($files) {
+	//       //$files: an array of files selected, each file has name, size, and type.
+	//       for (var i = 0; i < $files.length; i++) {
+	//         console.log("in onFileSelect");
+	// 			var file = $files[i];
+	//         $scope.upload = $upload.upload({
+	//           url: 'server/upload/url', //upload.php script, node.js route, or servlet url
+	//           // method: POST or PUT,
+	//           // headers: {'headerKey': 'headerValue'}, withCredential: true,
+	//           data: {myObj: $scope.myModelObj},
+	//           file: file,
+	//           // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
+	//           /* set file formData name for 'Content-Desposition' header. Default: 'file' */
+	//           //fileFormDataName: myFile,
+	//           /* customize how data is added to formData. See #40#issuecomment-28612000 for example */
+	//           //formDataAppender: function(formData, key, val){} 
+	//         }).progress(function(evt) {
+	//           console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+	//         }).success(function(data, status, headers, config) {
+	//           // file is uploaded successfully
+	//           console.log(data);
+	//         });
+	//         //.error(...)
+	//         //.then(success, error, progress); 
+	//       }
+	//     };
+	//   });
+
+	
+  var MyCtrl = [ '$scope', '$upload', function($scope, $upload) {
+		
+		$scope.selectedFiles = [];
+		$scope.dataUrls = [];
+		
+		console.log("in MyCtrl");
+    $scope.onFileSelect = function($files) {
+      //$files: an array of files selected, each file has name, size, and type.
+			console.log("in onFileSelect");
+			// console.log($files[0].name);
+			$scope.file = $files[0];
+      for (var i = 0; i < $files.length; i++) {
+        // var file = $files[i];
+				
+				$scope.selectedFiles['image'] = $files[0];
+				
+				var file = $files[0];
+		    if (window.FileReader && file.type.indexOf('image') > -1) {
+		        var fileReader = new FileReader();
+		        fileReader.readAsDataURL($files[0]);
+
+		        fileReader.onload = function(e) {
+		        $timeout(function() {
+		        $scope.dataUrls['image'] = e.target.result;
+		            });
+		        }
+		    }    
+				
+				
+        $scope.upload = $upload.upload({
+					url: 'server/upload/url', //upload.php script, node.js route, or servlet url
+          // method: POST or PUT,
+          // headers: {'headerKey': 'headerValue'}, withCredential: true,
+          data: {myObj: $scope.myModelObj},
+          file: file,
+          // file: $files, //upload multiple files, this feature only works in HTML5 FromData browsers
+          /* set file formData name for 'Content-Desposition' header. Default: 'file' */
+          //fileFormDataName: myFile,
+          /* customize how data is added to formData. See #40#issuecomment-28612000 for example */
+          //formDataAppender: function(formData, key, val){} 
+        }).progress(function(evt) {
+          console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
+        }).success(function(data, status, headers, config) {
+          // file is uploaded successfully
+          console.log(data);
+        });
+        //.error(...)
+        //.then(success, error, progress); 
+      }
+    };
+  }];
+	</script>
+</head>
+<body>
+	<div ng-controller="MyCtrl">
+	  <input type="text" ng-model="myModelObj">
+	  <input type="file" ng-file-select="onFileSelect($files)">
+	  <input type="file" ng-file-select="onFileSelect($files)" multiple>
+	  <div ng-file-drop="onFileSelect($files)" ng-file-drag-over-class="optional-css-class"
+	        ng-show="dropSupported">drop files here</div>
+	  <div ng-file-drop-available="dropSupported=true" 
+	        ng-show="!dropSupported">HTML5 Drop File is not supported!</div>
+	  <button ng-click="upload.abort()">Cancel Upload</button>
+		<br>
+		<!-- <img ng-if="file" ng-src="./{{fname}}"> -->
+		<img ng-show="dataUrls['image']" ng-src="{{dataUrls['image']}}">
+	</div>
+</body>

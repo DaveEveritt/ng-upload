@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="myApp" lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>ng image upload</title>
+  <script src="js/angular.min.js"></script>
+  <script src="js/angular-file-upload.js"></script>
+
+  <script>
+  var app = angular.module('myApp', ['angularFileUpload']);
+  var PicUpload = [ '$scope', '$upload', function($scope, $upload) {
+    // $scope.model = 'test model';
+    
+    $scope.onFileSelect = function($files) {
+      $scope.file = $files[0];
+      $scope.my_reader = new FileReader;
+      $scope.my_reader.onloadend = function() {
+        $scope.data_url = $scope.my_reader.result;
+        console.log($scope.data_url);
+        document.getElementById("myimg").src = $scope.data_url;
+      };
+      $scope.my_reader.readAsDataURL($scope.file);
+    };
+    
+    // $scope.save_image = function() {
+    //  $upload.upload({
+    //     data: $scope.model,
+    //     url: 'the/url',
+    //     file: $scope.file
+    //       }).then(console.log("Posted. Or not"));//success and error callbacks
+    //     };
+  }];
+  
+  </script>
+</head>
+<body>
+  <div ng-controller="PicUpload">
+    <input type="file" ng-file-select="onFileSelect($files)" accept="image/*;capture=camera">
+    <!-- <button ng-click="upload.abort()">Cancel Upload</button> -->
+    <p ng-bind="data_url"></p>
+    <img ng-src="{{data_url}}">
+    <input ng-click="save_image()" type="submit">send image</div>
+    
+    <img id="myimg" width="200" height="80" src="">
+    
+  </div>
+</body>
